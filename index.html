@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Valentinstag Einladung ❤️</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #ffe6e9;
+      color: #333;
+      text-align: center;
+      overflow: hidden;
+      transition: background-color 0.5s, color 0.5s;
+    }
+
+    .container {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: inline-block;
+      margin-top: 50px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #ff5e78;
+      margin-bottom: 20px;
+    }
+
+    button {
+      font-size: 1rem;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .yes {
+      background-color: #ff5e78;
+      color: white;
+    }
+
+    .yes:hover {
+      background-color: #ff8b9c;
+      transform: scale(1.1);
+    }
+
+    .no {
+      background-color: #ccc;
+      color: black;
+    }
+
+    .no:hover {
+      background-color: #aaa;
+      transform: scale(1.1);
+    }
+
+    .gallery {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+      flex-wrap: wrap; /* Bilder in mehreren Reihen anzeigen */
+      justify-content: space-around; /* Platz besser verteilen */
+    }
+
+    .gallery img {
+      width: 250px; /* Größere Bilder */
+      height: 250px; /* Größere Bilder */
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.1); /* Effekt beim Hover */
+    }
+
+    .notification {
+      background-color: #ff5e78;
+      color: white;
+      padding: 15px;
+      margin: 20px auto;
+      border-radius: 10px;
+      display: none;
+      font-size: 1.2rem;
+      width: 300px;
+      transition: opacity 0.3s ease;
+    }
+
+    .confetti, .flower, .glitter {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      opacity: 1;
+      animation: fall linear forwards;
+    }
+
+    .flower {
+      background-size: cover;
+      width: 30px;
+      height: 30px;
+      background-image: url('https://raw.githubusercontent.com/KaanSandikci/Valentinstag/main/flower.png');
+    }
+
+    .flower-1 { background-color: #ff5e78; }
+    .flower-2 { background-color: #ffcb77; }
+    .flower-3 { background-color: #f7c6ff; }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .celebrate {
+      background-color: #ff5e78;
+      color: white;
+      animation: colorChange 3s infinite alternate;
+    }
+
+    @keyframes colorChange {
+      0% { background-color: #ff5e78; color: white; }
+      20% { background-color: #ffdf76; color: #333; }
+      40% { background-color: #ff8b9c; color: #fff; }
+      60% { background-color: #ffcb77; color: #fff; }
+      80% { background-color: #ff5e78; color: white; }
+      100% { background-color: #f7c6ff; color: #333; }
+    }
+
+    @keyframes glitterAnimation {
+      0% { opacity: 0.7; transform: scale(0.5); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="mainQuestion">Möchtest du mit mir zum Valentinstag ausgehen? ❤️</h1>
+    <div id="mainButtons">
+      <button class="yes" onclick="sendResponse('Ja')">Ja</button>
+      <button class="no" onclick="confirmNo()">Nein</button>
+    </div>
+  </div>
+
+  <!-- Bildergalerie -->
+  <div class="gallery">
+    <img src="https://raw.githubusercontent.com/KaanSandikci/Valentinstag/main/IMG_4671.jpeg" alt="Bild 1">
+    <img src="https://raw.githubusercontent.com/KaanSandikci/Valentinstag/main/IMG_4674.jpeg" alt="Bild 2">
+    <img src="https://raw.githubusercontent.com/KaanSandikci/Valentinstag/main/IMG_4961.jpeg" alt="Bild 3">
+  </div>
+
+  <!-- Benachrichtigung -->
+  <div id="notification" class="notification"></div>
+
+  <!-- Audio -->
+  <audio id="music" src="https://github.com/KaanSandikci/Valentinstag/raw/refs/heads/main/Valentin.mp3" preload="auto"></audio>
+
+  <script>
+    let noClicks = 0;
+    let firstYesClicked = false; // Flag für das erste Ja
+
+    function createConfetti() {
+      for (let i = 0; i < 1000; i++) { // Mehr Konfetti
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * window.innerWidth + 'px';
+        confetti.style.top = '-50px';
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        confetti.style.animationDuration = 6 + Math.random() * 8 + 's'; // Längere Dauer
+        confetti.style.animationDelay = Math.random() * 3 + 's';
+        confetti.style.width = Math.random() * 10 + 7 + 'px'; // Größeres Konfetti
+        confetti.style.height = confetti.style.width;
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 15000); // Längere Sichtbarkeit
+      }
+    }
+
+    function createFlowers() {
+      for (let i = 0; i < 1500; i++) { // Mehr Blumen
+        const flower = document.createElement('div');
+        flower.className = 'flower';
+        flower.classList.add(`flower-${Math.floor(Math.random() * 3) + 1}`); // Zufällige Blumenfarbe
+        flower.style.left = Math.random() * window.innerWidth + 'px';
+        flower.style.top = '-50px';
+        flower.style.animationDuration = 8 + Math.random() * 10 + 's'; // Längere Dauer
+        flower.style.animationDelay = Math.random() * 3 + 's';
+        document.body.appendChild(flower);
+
+        setTimeout(() => flower.remove(), 15000); // Längere Sichtbarkeit
+      }
+    }
+
+    function createGlitter() {
+      for (let i = 0; i < 100; i++) { // Glitter-Effekt hinzufügen
+        const glitter = document.createElement('div');
+        glitter.className = 'glitter';
+        glitter.style.left = Math.random() * window.innerWidth + 'px';
+        glitter.style.top = Math.random() * window.innerHeight + 'px';
+        glitter.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 90%)`;
+        glitter.style.width = Math.random() * 10 + 5 + 'px';
+        glitter.style.height = glitter.style.width;
+        glitter.style.animation = 'glitterAnimation 1.5s infinite alternate';
+        document.body.appendChild(glitter);
+
+        setTimeout(() => glitter.remove(), 3000); // Glitter bleibt für kurze Zeit
+      }
+    }
+
+    function createConfettiLoop() {
+      createConfetti();
+      setTimeout(createConfettiLoop, 60000); // Alle 60 Sekunden neues Konfetti generieren
+    }
+
+    function sendResponse(answer) {
+      if (answer === 'Ja' && !firstYesClicked) { // Nur beim ersten "Ja"
+        firstYesClicked = true; // Setze das Flag, dass das erste Ja geklickt wurde
+        const music = document.getElementById('music');
+        music.play();
+        createConfetti();
+        createFlowers(); // Mehr Blumen werden jetzt erzeugt
+        createGlitter(); // Glitter hinzufügen
+        createConfettiLoop(); // Konfetti-Schleife starten
+        document.body.classList.add('celebrate'); // Seite bekommt festliche Atmosphäre
+        showNotification('Ich freue mich auf dich ❤️');
+      }
+    }
+
+    function confirmNo() {
+      noClicks++;
+      const question = document.getElementById('mainQuestion');
+      const buttons = document.getElementById('mainButtons');
+
+      if (noClicks === 1) {
+        showNotification('Bist du dir sicher?☹️');
+        question.textContent = 'Bist du dir sicher?☹️';
+        buttons.innerHTML = `
+          <button class="yes" onclick="confirmResponse('Ja')">Ja</button>
+          <button class="no" onclick="confirmResponse('Nein')">Nein</button>
+        `;
+      }
+    }
+
+    function confirmResponse(response) {
+      if (response === 'Ja') {
+        showNotification('Diese Option gibt es nicht!! 😠');
+        setTimeout(() => resetQuestion(), 5000);
+      } else if (response === 'Nein') {
+        showNotification('Ich wusste es doch!🥰');
+        setTimeout(() => resetQuestion(), 5000);
+      }
+    }
+
+    function resetQuestion() {
+      const question = document.getElementById('mainQuestion');
+      const buttons = document.getElementById('mainButtons');
+      question.textContent = 'Möchtest du mit mir zum Valentinstag ausgehen? ❤️';
+      buttons.innerHTML = `
+        <button class="yes" onclick="sendResponse('Ja')">Ja</button>
+        <button class="no" onclick="confirmNo()">Nein</button>
+      `;
+      noClicks = 0;
+      document.getElementById('notification').style.display = 'none';
+      document.body.classList.remove('celebrate'); // Feierliche Stimmung entfernen
+    }
+
+    function showNotification(message) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.display = 'block';
+      setTimeout(() => notification.style.display = 'none', 3000);
+    }
+  </script>
+</body>
+</html>
